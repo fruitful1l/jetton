@@ -25,11 +25,12 @@ contract JettonWalletFeatureRich(
             "Insufficient amount of TON attached",
         );
 
+        checkEitherForwardPayload(msg.forwardPayload);
+
         if (msg.customPayload == null) {
             self.balance -= msg.amount;
             require(self.balance >= 0, "Incorrect balance after send");
-            checkEitherForwardPayload(msg.forwardPayload);
-
+            
             deploy(DeployParameters {
                 value: 0,
                 mode: SendRemainingValue,
@@ -40,6 +41,7 @@ contract JettonWalletFeatureRich(
                     sender: self.owner,
                     responseDestination: msg.responseDestination,
                     forwardTonAmount: msg.forwardTonAmount,
+                    forwardStateInit: null,
                     forwardPayload: msg.forwardPayload,
                 }.toCell(),
                 init: initOf JettonWalletFeatureRich(msg.destination, self.minter, 0),
