@@ -13,6 +13,7 @@ contract JettonWalletFeatureRich(
     receive(msg: JettonTransfer) {
         forceBasechain(msg.destination);
         require(sender() == self.owner, "Incorrect sender");
+        require(msg.amount <= self.balance, "Incorrect balance after send");
 
         let ctx = context();
         let fwdCount = 1 + sign(msg.forwardTonAmount); // msg.forwardTonAmount is coins, so it's positive
@@ -29,7 +30,6 @@ contract JettonWalletFeatureRich(
 
         if (msg.customPayload == null) {
             self.balance -= msg.amount;
-            require(self.balance >= 0, "Incorrect balance after send");
             
             deploy(DeployParameters {
                 value: 0,
@@ -199,10 +199,10 @@ contract JettonWalletFeatureRich(
         // we can skip forceBasechain here because with other checks in place it's not possible
         // to acquire jettons outside of basechain, so amount check is enough
         require(sender() == self.owner, "Incorrect sender");
+        require(msg.amount <= self.balance, "Incorrect balance after send");
 
         self.balance -= msg.amount;
-        require(self.balance >= 0, "Incorrect balance after send");
-
+        
         let ctx = context();
         let fwdFee: Int = ctx.readForwardFee();
         require(ctx.value > (fwdFee + 2 * getComputeFee(gasForBurn, false)), "Insufficient amount of TON attached");
