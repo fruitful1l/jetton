@@ -30,7 +30,7 @@ contract JettonWalletFeatureRich(
 
         if (msg.customPayload == null) {
             self.balance -= msg.amount;
-            
+
             deploy(DeployParameters {
                 value: 0,
                 mode: SendRemainingValue,
@@ -202,7 +202,7 @@ contract JettonWalletFeatureRich(
         require(msg.amount <= self.balance, "Incorrect balance after send");
 
         self.balance -= msg.amount;
-        
+
         let ctx = context();
         let fwdFee: Int = ctx.readForwardFee();
         require(ctx.value > (fwdFee + 2 * getComputeFee(gasForBurn, false)), "Insufficient amount of TON attached");
